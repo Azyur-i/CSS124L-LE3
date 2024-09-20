@@ -11,10 +11,9 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import java.util.Optional;
 import java.io.*;
+import com.groupfour.TEController;
 
-/**
- * JavaFX App
- */
+
 public class App extends Application {
 
     private static Scene scene;
@@ -30,7 +29,7 @@ public class App extends Application {
         stage.show();
 
         TEController tc = fxmlLoader.getController();
-        System.out.println("Controller: " + tc);
+        
 
         stage.setOnCloseRequest(event -> {
           
@@ -47,20 +46,12 @@ public class App extends Application {
         
                 Optional<ButtonType> result = alert.showAndWait();
                 
-                try {
-                    if (result.isPresent() && result.get() == buttonYes){
-                        FileWriter myWriter = new FileWriter("TextFile.txt");
-                        myWriter.write(tc.textArea.getText());
-                            myWriter.close();
-                        } else if (result.isPresent() && result.get() == buttonNo) {
-                            stage.close();
-                    } 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (result.isPresent() && result.get() == buttonYes) {
+                    tc.nameFile();
+                    } else if (result.isPresent() && result.get() == buttonNo) {
+                        stage.close();
                 }
             }
-            else
-            stage.close();
         });
     }
 

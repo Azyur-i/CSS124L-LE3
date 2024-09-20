@@ -1,12 +1,16 @@
 package com.groupfour;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+
 import java.util.Optional;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Font;
 import java.io.*;
 
@@ -29,6 +33,33 @@ public class TEController {
         drpdColor.getItems().setAll("Red", "Green", "Blue");
         drpdSize.getItems().setAll("5", "10", "15");
         textArea.textProperty().addListener((observable, oldValue, newValue) -> isModified = true);
+    }
+
+    public void nameFile() {
+        TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Enter filename");
+            dialog.setHeaderText("Please enter the filename");
+            dialog.setContentText("Filename: ");
+            Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+            okButton.disableProperty().bind(Bindings.isEmpty(dialog.getEditor().textProperty()));
+
+            dialog.showAndWait().ifPresent(filename -> {
+                if (!filename.isEmpty()) {
+                    try(FileWriter myWriter = new FileWriter(filename + ".txt")) {
+                        myWriter.write(textArea.getText());
+                        
+                        myWriter.close();
+                            
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Saved Successfully");
+                        alert.setHeaderText("Your work has been saved");
+                        alert.showAndWait();
+
+                    } catch (IOException e) {
+                        isModified = false;
+                    } 
+                }
+            });
     }
 
     public boolean getChanges() {
@@ -91,15 +122,7 @@ public class TEController {
 
     @FXML
     private void handlebtnSave() throws IOException {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Saved Successfully");
-        alert.setHeaderText("Your work has been saved");
-        alert.setContentText("You may now continue working");
-        alert.showAndWait();
-        FileWriter myWriter = new FileWriter("TextFile.txt");
-        myWriter.write(textArea.getText());
-        myWriter.close();
-        isModified = false;
+        nameFile();
     }
 
     // I have no idea how to save the changes in font stuff
@@ -108,29 +131,23 @@ public class TEController {
     private void handlebtnExit() throws IOException {
 
         if (getChanges()) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Warning!");
-            alert.setHeaderText("You have unsaved changes");
-            alert.setContentText("Would you like to save your changes?");
+            Alert changeAlert = new Alert(AlertType.WARNING);
+            changeAlert.setTitle("Warning!");
+            changeAlert.setHeaderText("You have unsaved changes");
+            changeAlert.setContentText("Would you like to save your changes?");
             ButtonType buttonYes = new ButtonType("Confirm");
             ButtonType buttonNo = new ButtonType("Discard");
             
-            alert.getButtonTypes().setAll(buttonYes, buttonNo);
+            changeAlert.getButtonTypes().setAll(buttonYes, buttonNo);
     
-            Optional<ButtonType> result = alert.showAndWait();
+            Optional<ButtonType> result = changeAlert.showAndWait();
             
             if (result.isPresent() && result.get() == buttonYes){
-                FileWriter myWriter = new FileWriter("TextFile.txt");
-                myWriter.write(textArea.getText());
-                myWriter.close();
-                isModified = false;
-
+                nameFile();
             } else if (result.isPresent() && result.get() == buttonNo) {
                 System.exit(1);
             }
         }
-        else
-        System.out.println(getChanges());
-        System.exit(1);
+        
     }
 }

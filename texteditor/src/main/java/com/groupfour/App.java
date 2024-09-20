@@ -34,7 +34,7 @@ public class App extends Application {
 
         stage.setOnCloseRequest(event -> {
           
-            if (tc.textChanges()) {
+            if (tc.getChanges()) {
     
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Warning!");

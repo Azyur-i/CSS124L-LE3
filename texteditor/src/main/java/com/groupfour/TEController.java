@@ -35,6 +35,10 @@ public class TEController {
         textArea.textProperty().addListener((observable, oldValue, newValue) -> isModified = true);
     }
 
+    public void initializeText(String string){
+        textArea.appendText(string);
+    }
+
     public void nameFile() {
         TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Enter filename");

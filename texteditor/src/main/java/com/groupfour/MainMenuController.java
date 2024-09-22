@@ -13,17 +13,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class PrimaryController implements Initializable{
+public class MainMenuController implements Initializable{
     FileChooser fileChooser = new FileChooser();
-    public String text;
 
     // They're unused (?????????)
-    
     @FXML
-    private void switchToSecondary() throws IOException {
+    private VBox MainMenuVboxContainer;
+    @FXML
+    private void switchToMainMenu() throws IOException {
         App.setRoot("MainMenu");
     }
     @FXML
@@ -41,21 +43,30 @@ public class PrimaryController implements Initializable{
     }
     @FXML
     private void handleloadFileBtn() throws IOException {
-        text = "";
-        File file = fileChooser.showOpenDialog(new Stage());
-        handlecreateFileBtn();  
+        String loadedText = "";
+        File file = fileChooser.showOpenDialog(MainMenuVboxContainer.getScene().getWindow());
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("TextEditorG4" + ".fxml"));
+        Parent root = loader.load();
+        TEController teController = loader.getController();
+        Scene scene = new Scene(root);
+        
         try {
             Scanner scanner = new Scanner(file);
             while(scanner.hasNextLine()) {
-                text = scanner.nextLine() + "\n";
-            }        
+                loadedText += scanner.nextLine()+"\n";
+            }
+            teController.textArea.appendText(loadedText);
+            scanner.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        stage.setScene(scene);
+        stage.show();
     }
     
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        fileChooser.setInitialDirectory(new File("C:\\Users\\Cent\\Downloads\\LE3\\le3\\src\\main\\sample"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\Cent\\Desktop\\CSS124L-LE3\\CSS124L-LE3"));
     }
 }

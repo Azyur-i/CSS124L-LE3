@@ -31,10 +31,4 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
-
-    public static void loadSecondaryController() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("Secondary.fxml"));
-        Parent secondaryRoot = fxmlLoader.load();
-        SecondaryController sc = fxmlLoader.getController();
-    }
 }

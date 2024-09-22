@@ -147,6 +147,8 @@ public class TEController {
             } else if (result.isPresent() && result.get() == buttonNo) {
                 System.exit(1);
             }
+        } else {
+            System.exit(1);
         }
         
     }

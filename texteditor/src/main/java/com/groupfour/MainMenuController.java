@@ -130,8 +130,6 @@ public class MainMenuController implements Initializable{
         recentFiles.add(0, file.getAbsolutePath());
         saveRecentFiles();
         displayRecentFiles();
-        saveRecentFiles();
-        displayRecentFiles();
     }
     
 

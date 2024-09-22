@@ -100,13 +100,14 @@ public class MainMenuController implements Initializable{
         stage.show();
     }
 
-    private void loadFile(File file) throws IOException{
+    private void loadFile(File file) throws IOException {
         String loadedText = "";
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(App.class.getResource("TextEditorG4" + ".fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         TEController teController = loader.getController();
+        teController.setLoadedFilename(file.getAbsolutePath());
         try {
             Scanner scanner = new Scanner(file);
             while(scanner.hasNextLine()) {
@@ -114,7 +115,7 @@ public class MainMenuController implements Initializable{
             }
             teController.textArea.appendText(loadedText);
             scanner.close();
-
+    
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } 
@@ -122,7 +123,7 @@ public class MainMenuController implements Initializable{
         stage.show();
         
         currentStage= (Stage)MainMenuVboxContainer.getScene().getWindow();
-
+    
         currentStage.close();
         if(recentFiles.contains(file.getAbsolutePath())) {
             recentFiles.remove(file.getAbsolutePath());
@@ -141,7 +142,7 @@ public class MainMenuController implements Initializable{
     
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        fileChooser.setInitialDirectory(new File("C:\\Users\\Cent\\Desktop\\CSS124L-LE3\\CSS124L-LE3"));
+        fileChooser.setInitialDirectory(new File("C:\\"));
         loadRecentFiles();
         displayRecentFiles();
     }

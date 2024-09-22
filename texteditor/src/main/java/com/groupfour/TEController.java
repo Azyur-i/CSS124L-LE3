@@ -25,9 +25,9 @@ public class TEController {
     @FXML TextArea textArea;
 
     private boolean isModified = false;
+    private String filename = "";
 
-    @FXML
-    
+    @FXML 
     public void initialize() {
         drpdFamily.getItems().setAll("Arial", "Times New Roman", "Comic Sans");
         drpdColor.getItems().setAll("Red", "Green", "Blue");
@@ -39,31 +39,47 @@ public class TEController {
         textArea.appendText(string);
     }
 
+    private String loadedFilename;
+
+    public void setLoadedFilename(String filename) {
+        this.loadedFilename = filename;
+    }
+    
     public void nameFile() {
         TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Enter filename");
-            dialog.setHeaderText("Please enter the filename");
-            dialog.setContentText("Filename: ");
-            Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-            okButton.disableProperty().bind(Bindings.isEmpty(dialog.getEditor().textProperty()));
+        dialog.setTitle("Enter filename");
+        dialog.setHeaderText("Please enter the filename");
+        dialog.setContentText("Filename: ");
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.disableProperty().bind(Bindings.isEmpty(dialog.getEditor().textProperty()));
 
-            dialog.showAndWait().ifPresent(filename -> {
-                if (!filename.isEmpty()) {
-                    try(FileWriter myWriter = new FileWriter(filename + ".txt")) {
-                        myWriter.write(textArea.getText());
-                        
-                        myWriter.close();
-                            
-                        Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("Saved Successfully");
-                        alert.setHeaderText("Your work has been saved");
-                        alert.showAndWait();
+        dialog.showAndWait().ifPresent(newFilename -> {
+            if (!newFilename.isEmpty()) {
+                filename = newFilename;
+                saveFile(filename);
+            }
+        });
+    }
 
-                    } catch (IOException e) {
-                        isModified = false;
-                    } 
-                }
-            });
+    private void saveFile(String filename) {
+        String newFilename = filename;
+        int lastIndex = filename.lastIndexOf('.');
+        if (lastIndex != -1) {
+            newFilename = filename.substring(0, lastIndex);
+        }
+        newFilename += ".txt";
+    
+        try (FileWriter myWriter = new FileWriter(newFilename)) {
+            myWriter.write(textArea.getText());
+            myWriter.close();
+            
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Saved Successfully");
+            alert.setHeaderText("Your work has been saved");
+            alert.showAndWait();
+        } catch (IOException e) {
+            isModified = false;
+        }
     }
 
     public boolean getChanges() {
@@ -126,10 +142,13 @@ public class TEController {
 
     @FXML
     private void handlebtnSave() throws IOException {
-        nameFile();
+        if (loadedFilename != null && !loadedFilename.isEmpty()) {
+            saveFile(loadedFilename);
+        } else {
+            nameFile();
+        }
     }
 
-    // I have no idea how to save the changes in font stuff
 
     @FXML
     private void handlebtnExit() throws IOException {
